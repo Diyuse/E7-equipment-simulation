@@ -9,6 +9,17 @@ for i in range(0,6):
     for j in range (0,10):
         equips[i].append(0)
 
+#I need to store the percent increase of stats and the flat
+calc = list()
+#flat+%
+for i in range(0,4):
+    calc.append([])
+    for j in range(0,2):
+        calc[i].append(0)
+#% only
+for i in range(4,9):
+    calc.append(0)
+
 #Stores the stats to be displayed
 stats = list()
 for i in range(0,9):
@@ -21,11 +32,11 @@ class Character():
         self.level = '50'
         self.star = '5'
         self.awake = '5'
-        self.attack = '742'
+        self.attack = '928'
         self.defense = '446'
-        self.health = '4074'
+        self.health = '4536'
         self.speed = '112'
-        self.critC = '15%'
+        self.critC = '23%'
         self.critD = '150%'
         self.effect = '0'
         self.resist = '0'
@@ -114,7 +125,7 @@ def createEquip(self, name, main_name, main_value, sub1_name, sub1_value, sub2_n
     else:
         if (name == "Necklace"):
             pos = 3
-            equips[pos][0] = MyOptionMenu(self, "Main", "Attack", "Health", "Defense", "CritR", "CritD")
+            equips[pos][0] = MyOptionMenu(self, "Main", "Attack", "Health", "Defense", "CritC", "CritD")
             equips[pos][0].config(font=("Arial bold", 11), bg="#000000", fg="white", width=10)
             equips[pos][0].set(current_equips[0])
             equips[pos][0].grid(row=1, sticky=W) #row=1 cuz 0 is the subtitle
@@ -204,6 +215,56 @@ def submit():
 ##                        hero.health = str(int(hero.health) + 60)
 
     #check for percentile and flat
+    #reset calc
+    #flat+%
+    for i in range(0,4):
+        for j in range(0,2):
+            calc[i][j] = 0
+    #% only
+    for i in range(4,9):
+        calc[i] = 0
+    #check left side
+    for i in range(0,3):
+        #add the main stat to its respective position
+        if (i == 0):
+            #attack
+            calc[0][1] += int(equips[i][1].get())
+        elif (i == 1):
+            #health
+            calc[2][1] += int(equips[i][1].get())
+        else:
+            #defense
+            calc[1][1] += int(equips[i][1].get())
+        #add the sub stats
+        for j in range (1,5):
+            if (str(equips[i][j*2].get()) == 'Attack'):
+                if (str(equips[i][j*2+1].get())[-1] == '%'):
+                    calc[0][0] += int(str(equips[i][j*2+1].get()[:-1]))
+                else:
+                    calc[0][1] += int(str(equips[i][j*2+1].get()))
+            elif (str(equips[i][j*2].get()) == 'Defense'):
+                if (str(equips[i][j*2+1].get())[-1] == '%'):
+                    calc[1][0] += int(str(equips[i][j*2+1].get()[:-1]))
+                else:
+                    calc[1][1] += int(str(equips[i][j*2+1].get()))
+            elif (str(equips[i][j*2].get()) == 'Health'):
+                if (str(equips[i][j*2+1].get())[-1] == '%'):
+                    calc[2][0] += int(str(equips[i][j*2+1].get()[:-1]))
+                else:
+                    calc[2][1] += int(str(equips[i][j*2+1].get()))
+            elif (str(equips[i][j*2].get()) == 'Speed'):
+                if (str(equips[i][j*2+1].get())[-1] == '%'):
+                    calc[3][0] += int(str(equips[i][j*2+1].get()[:-1]))
+                else:
+                    calc[3][1] += int(str(equips[i][j*2+1].get()))
+            elif (str(equips[i][j*2].get()) == 'CritC'):
+                calc[4] += int(str(equips[i][j*2+1].get()[:-1]))
+            elif (str(equips[i][j*2].get()) == 'CritD'):
+                calc[5] += int(str(equips[i][j*2+1].get()[:-1]))
+            elif (str(equips[i][j*2].get()) == 'Effect'):
+                calc[6] += int(str(equips[i][j*2+1].get()[:-1]))
+            else:
+                calc[7] += int(str(equips[i][j*2+1].get()[:-1]))
 ##    for i in range(0,6):
 ##        for j in range(0,10):
 ##            equips[i][j]
@@ -213,6 +274,12 @@ def submit():
     #Stat setup
 ##    for i in range(0,9):
 ##        stats[i]['text'] = str(calc[i][0]*calc[i][1] + calc[i][2])
+
+#This function checks what stat is there
+##def check(array,data):
+##    print('checking')
+##    if (data[-1] = '%'):
+##        array[1] += data[0:-1] #deals with the percent
 
 #This function prints something on click
 def printme():
@@ -417,13 +484,6 @@ button.grid(row=0, padx=5)
 button = Button(buttonFrame, text="Submit", font=("Arial bold",11), width=9, bg="#40201E", fg="white", activebackground="#35281E", activeforeground="white", command=submit)
 button.grid(row=0, column=2, padx=5)
 
-#I need to store the percent increase of stats and the flat
-calc = list()
-for i in range(0,9):
-    calc.append([])
-    for j in range(0,3):
-        calc[i].append(0)
-
 #setup from the text file
 if os.path.isfile('./Data/Yuna.txt'):
     #if file exists
@@ -451,12 +511,23 @@ if os.path.isfile('./Data/Yuna.txt'):
     #right side
     for i in range(3,6):
         temp = data[i+1].split(',')
-        
         for j in range(0,5):
             equips[i][j*2].set(temp[j*2])
             equips[i][j*2+1].delete(0,END)
             equips[i][j*2+1].insert(END, temp[j*2+1])
 
+    #artifact
+    temp = data[7].split(',')
+    atk_E.delete(0,END)
+    atk_E.insert(END, temp[0])
+    hp_E.delete(0,END)
+    hp_E.insert(END, temp[1])
+
+    #sets
+    temp = data[8].split(',')
+    set1.set(temp[0])
+    set2.set(temp[1])
+    set3.set(temp[2])
 else:
     #if file doesn't exist
     save()
