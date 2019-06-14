@@ -20,7 +20,7 @@ class Character():
         self.name = 'Yuna'
         self.level = '50'
         self.star = '5'
-        self.awake = '0'
+        self.awake = '5'
         self.attack = '742'
         self.defense = '446'
         self.health = '4074'
@@ -151,7 +151,11 @@ def createEquip(self, name, main_name, main_value, sub1_name, sub1_value, sub2_n
 def save():
     print('saving')
     file = open("./Data/Yuna.txt", 'w+')
-    file.write('Ice,'+hero.level +',' + hero.star + ',' + hero.awake +',Leo,\n')
+    if (str(awake_E.get()) == '5'):
+        hero.level = '50'
+    else:
+        hero.level = '60'
+    file.write('Ice,'+ hero.level +',' + str(awake_E.get()) + ',' + str(awake_E.get()) +',Leo,\n')
     #left side
     for i in range(0,3):
         for j in range(1,10):
@@ -162,43 +166,53 @@ def save():
         for j in range(0,10):
             file.write(equips[i][j].get() + ',')
         file.write('\n')
-    file.write("0,0,\n")
-    file.write("Attack,Attack,Attack,\n")
+    file.write(str(atk_E.get()) + ',' + str(hp_E.get()) + ',\n')
+    file.write(str(set1.get()) + ',' + str(set2.get()) + ',' + str(set3.get()) + ',\n')
     file.close()
 
 #This function applies the changes on submission
 def submit():
+    #make changes depending on hero
     print('submitting')
-    #Awakening stats (this is true for all heroes)
-    if (int(hero.awake) > 0):
-        hero.attack = str(int(hero.attack) + 20)
-        hero.health = str(int(hero.health) + 60)
-    if (int(hero.awake) > 1):
-        hero.attack = str(int(hero.attack) + 20)
-        hero.health = str(int(hero.health) + 60)
-        if (int(hero.awake) > 2):
-            hero.attack = str(int(hero.attack) + 20)
-            hero.health = str(int(hero.health) + 60)
-            if (int(hero.awake) > 3):
-                hero.attack = str(int(hero.attack) + 30)
-                hero.health = str(int(hero.health) + 60)
-                if (int(hero.awake) > 4):
-                    hero.attack = str(int(hero.attack) + 30)
-                    hero.health = str(int(hero.health) + 60)
-                    if (int(hero.awake) > 5):
-                        hero.attack = str(int(hero.attack) + 30)
-                        hero.health = str(int(hero.health) + 60)
+    #check for the character change
+    if (hero.name != str(charaName.get())):
+        print("changing")
+        #change image + stats + equips
+    #check
+    hero.awake = str(awake_E.get())
+    if (hero.awake == '5'):
+        hero.level = '50'
+        hero.star = '5'
+##    #Awakening stats (this is true for all heroes)
+##    if (int(hero.awake) > 0):
+##        hero.attack = str(int(hero.attack) + 20)
+##        hero.health = str(int(hero.health) + 60)
+##    if (int(hero.awake) > 1):
+##        hero.attack = str(int(hero.attack) + 20)
+##        hero.health = str(int(hero.health) + 60)
+##        if (int(hero.awake) > 2):
+##            hero.attack = str(int(hero.attack) + 20)
+##            hero.health = str(int(hero.health) + 60)
+##            if (int(hero.awake) > 3):
+##                hero.attack = str(int(hero.attack) + 30)
+##                hero.health = str(int(hero.health) + 60)
+##                if (int(hero.awake) > 4):
+##                    hero.attack = str(int(hero.attack) + 30)
+##                    hero.health = str(int(hero.health) + 60)
+##                    if (int(hero.awake) > 5):
+##                        hero.attack = str(int(hero.attack) + 30)
+##                        hero.health = str(int(hero.health) + 60)
 
     #check for percentile and flat
 ##    for i in range(0,6):
 ##        for j in range(0,10):
 ##            equips[i][j]
     #do the changes
-    calc[0][0] = int(hero.attack)
+##    calc[0][0] = int(hero.attack)
     
     #Stat setup
-    for i in range(0,9):
-        stats[i]['text'] = str(calc[i][0]*calc[i][1] + calc[i][2])
+##    for i in range(0,9):
+##        stats[i]['text'] = str(calc[i][0]*calc[i][1] + calc[i][2])
 
 #This function prints something on click
 def printme():
@@ -284,19 +298,19 @@ setArea = Frame(eArea)
 setArea['bg'] = 'black'
 set_L = Label(setArea, text='Sets', font=("Arial bold", 11), bg="#000000", fg="white")
 set_L.grid(columnspan=3)
-set1 = MyOptionMenu(setArea, "Set1", "Attack", "Health", "Defense", "Speed", "Critical", "Hit Rate", "Destruction", "Lifesteal", "Counter", "Resist", "Unity", "Rage", "Immunity")
+set1 = MyOptionMenu(setArea, "Set1", "None", "Attack", "Health", "Defense", "Speed", "Critical", "Hit Rate", "Destruction", "Lifesteal", "Counter", "Resist", "Unity", "Rage", "Immunity")
 set1.config(font=("Arial bold", 11), bg="#000000", fg="white", width=10)
-set1.set("No set effect")
+set1.set("None")
 set1.grid(row=1, padx=10)
 setArea['bg'] = 'black'
-set2 = MyOptionMenu(setArea, "Set1", "Attack", "Health", "Defense", "Speed", "Critical", "Hit Rate", "Destruction", "Lifesteal", "Counter", "Resist", "Unity", "Rage", "Immunity")
+set2 = MyOptionMenu(setArea, "Set1", "None", "Attack", "Health", "Defense", "Speed", "Critical", "Hit Rate", "Destruction", "Lifesteal", "Counter", "Resist", "Unity", "Rage", "Immunity")
 set2.config(font=("Arial bold", 11), bg="#000000", fg="white", width=10)
-set2.set("No set effect")
+set2.set("None")
 set2.grid(row=1, column=1, padx=10)
 setArea['bg'] = 'black'
-set3 = MyOptionMenu(setArea, "Set1", "Attack", "Health", "Defense", "Speed", "Critical", "Hit Rate", "Destruction", "Lifesteal", "Counter", "Resist", "Unity", "Rage", "Immunity")
+set3 = MyOptionMenu(setArea, "Set1", "None", "Attack", "Health", "Defense", "Speed", "Critical", "Hit Rate", "Destruction", "Lifesteal", "Counter", "Resist", "Unity", "Rage", "Immunity")
 set3.config(font=("Arial bold", 11), bg="#000000", fg="white", width=10)
-set3.set("No set effect")
+set3.set("None")
 set3.grid(row=1, column=2, padx=10)
 setArea.grid(columnspan=2, pady=20)
 
@@ -324,7 +338,7 @@ statArea.grid(row=1, column=2, padx=(0,20))
 #Level
 charaLevelFrame = Frame(statArea, bg='black')
 charaLevelFrame.grid(row=0, stick=NW, pady=(0,100))
-charaLevel_L = Label(charaLevelFrame, text="Lv. 60", font=("Arial bold", 15), bg='black', fg='orange')
+charaLevel_L = Label(charaLevelFrame, text="Lv. 50", font=("Arial bold", 15), bg='black', fg='orange')
 charaLevel_L.grid(row=0, stick=W)
 ##charaLevel_E = MyOptionMenu(charaLevelFrame, "lv", "50", "60")
 ##charaLevel_E.config(bg='black', fg='orange', font=("Arial bold", 15), width=2)
@@ -332,14 +346,14 @@ charaLevel_L.grid(row=0, stick=W)
 #Star
 starArea = Frame(statArea)
 starArea['bg']='black'
-star_L = Label(starArea, font=("Arial bold", 15), text='Star', bg='black', fg='white')
+star_L = Label(starArea, font=("Arial bold", 15), text='Star +', bg='black', fg='white')
 star_L.grid(row=0, stick=W)
-star_E = MyOptionMenu(starArea, "starlv", "1", "2", "3", "4", "5", "6")
-star_E.config(font=("Arial bold", 15), bg="#000000", fg="white", width=2)
-star_E.grid(row=0, column=1, stick=E, padx=(20,0))
+##star_E = MyOptionMenu(starArea, "starlv", "1", "2", "3", "4", "5", "6")
+##star_E.config(font=("Arial bold", 15), bg="#000000", fg="white", width=2)
+##star_E.grid(row=0, column=1, stick=E, padx=(20,0))
 awake_L = Label(starArea, font=("Arial bold", 15), text='Awakening', bg='black', fg='white')
 awake_L.grid(row=1, stick=W)
-awake_E = MyOptionMenu(starArea, 'awake', '0',"1", "2", "3", "4", "5", "6")
+awake_E = MyOptionMenu(starArea, 'awake', "5", "6")
 awake_E.config(font=("Arial bold", 15), bg="#000000", fg="white", width=2)
 awake_E.grid(row=1, column=1, stick=E, padx=(20,0))
 #Stats at the end (only a display)
@@ -412,21 +426,46 @@ for i in range(0,9):
 
 #setup from the text file
 if os.path.isfile('./Data/Yuna.txt'):
+    #if file exists
     file = open("./Data/Yuna.txt", 'r')
     data = file.readlines()
+    temp = data[0].split(',')
+    hero.name = 'Yuna'
+    charaName.set("Yuna")
+    hero.level = str(temp[1])
+    hero.star = str(temp[2])
+    hero.awake = str(temp[3])
+    charaLevel_L['text'] = 'Lv. ' + hero.level
+    awake_E.set(hero.star)
+    
+    #update on window
+    #left side
+    for i in range(0,3):        
+        temp = data[i+1].split(',')
+        equips[i][1].delete(0,END)
+        equips[i][1].insert(END, temp[0])
+        for j in range(1,5):
+            equips[i][j*2].set(str(temp[j*2-1]))
+            equips[i][j*2+1].delete(0,END)
+            equips[i][j*2+1].insert(END, temp[j*2])
+    #right side
+    for i in range(3,6):
+        temp = data[i+1].split(',')
+        
+        for j in range(0,5):
+            equips[i][j*2].set(temp[j*2])
+            equips[i][j*2+1].delete(0,END)
+            equips[i][j*2+1].insert(END, temp[j*2+1])
+
 else:
+    #if file doesn't exist
     save()
     file = open("./Data/Yuna.txt", 'r')
     data = file.readlines()
-    
-file.close()
-
-#setup base stats
-if (charaName.get() == 'Yuna'):
     hero.name = 'Yuna'
     hero.level = '50'
     hero.star = '5'
-    hero.awake = '0'
+    hero.awake = '5'
     hero.attack = '742'
     hero.defense = '446'
     hero.health = '4074'
@@ -436,6 +475,7 @@ if (charaName.get() == 'Yuna'):
     hero.effect = '0'
     hero.resist = '0'
     hero.dual = '5%'
+file.close()
 
 submit()
 
