@@ -25,6 +25,13 @@ stats = list()
 for i in range(0,9):
     stats.append(0)
 
+#used to check the base stats of the character
+lv50 = list()
+lv60 = list()
+for i in range(0,13):
+    lv50.append(0)
+    lv60.append(0)
+
 #Character class
 class Character():
     def __init__(self):
@@ -36,11 +43,11 @@ class Character():
         self.defense = '446'
         self.health = '4536'
         self.speed = '112'
-        self.critC = '23%'
-        self.critD = '150%'
+        self.critC = '23'
+        self.critD = '150'
         self.effect = '0'
         self.resist = '0'
-        self.dual = '5%'
+        self.dual = '5'
         
 #Edited optionMenu
 class MyOptionMenu(OptionMenu):
@@ -161,7 +168,7 @@ def createEquip(self, name, main_name, main_value, sub1_name, sub1_value, sub2_n
 #This function saves the data on submission and changes the display values
 def save():
     print('saving')
-    file = open("./Data/Yuna.txt", 'w+')
+    file = open("./Data/"+hero.name+'.txt', 'w+')
     if (str(awake_E.get()) == '5'):
         hero.level = '50'
     else:
@@ -188,13 +195,18 @@ def submit():
     #check for the character change
     if (hero.name != str(charaName.get())):
         print("changing")
+        hero.name = str(charaName.get())
+        photo= PhotoImage(file="./Images/"+hero.name+'.png')
+        charaImage.configure(image=photo)
+        charaImage(image=photo)
+
         #change image + stats + equips
     #check
     hero.awake = str(awake_E.get())
     if (hero.awake == '5'):
         hero.level = '50'
         hero.star = '5'
-##    #Awakening stats (this is true for all heroes)
+##    #Awakening stats (this is true for all heroes) #Ignored for now
 ##    if (int(hero.awake) > 0):
 ##        hero.attack = str(int(hero.attack) + 20)
 ##        hero.health = str(int(hero.health) + 60)
@@ -265,15 +277,79 @@ def submit():
                 calc[6] += int(str(equips[i][j*2+1].get()[:-1]))
             else:
                 calc[7] += int(str(equips[i][j*2+1].get()[:-1]))
-##    for i in range(0,6):
-##        for j in range(0,10):
-##            equips[i][j]
-    #do the changes
-##    calc[0][0] = int(hero.attack)
+
+    #check right side
+    for i in range(3,6):
+        #add the main stat
+        #add the sub stats
+        for j in range (0,5):
+            if (str(equips[i][j*2].get()) == 'Attack'):
+                if (str(equips[i][j*2+1].get())[-1] == '%'):
+                    calc[0][0] += int(str(equips[i][j*2+1].get()[:-1]))
+                else:
+                    calc[0][1] += int(str(equips[i][j*2+1].get()))
+            elif (str(equips[i][j*2].get()) == 'Defense'):
+                if (str(equips[i][j*2+1].get())[-1] == '%'):
+                    calc[1][0] += int(str(equips[i][j*2+1].get()[:-1]))
+                else:
+                    calc[1][1] += int(str(equips[i][j*2+1].get()))
+            elif (str(equips[i][j*2].get()) == 'Health'):
+                if (str(equips[i][j*2+1].get())[-1] == '%'):
+                    calc[2][0] += int(str(equips[i][j*2+1].get()[:-1]))
+                else:
+                    calc[2][1] += int(str(equips[i][j*2+1].get()))
+            elif (str(equips[i][j*2].get()) == 'Speed'):
+                if (str(equips[i][j*2+1].get())[-1] == '%'):
+                    calc[3][0] += int(str(equips[i][j*2+1].get()[:-1]))
+                else:
+                    calc[3][1] += int(str(equips[i][j*2+1].get()))
+            elif (str(equips[i][j*2].get()) == 'CritC'):
+                calc[4] += int(str(equips[i][j*2+1].get()[:-1]))
+            elif (str(equips[i][j*2].get()) == 'CritD'):
+                calc[5] += int(str(equips[i][j*2+1].get()[:-1]))
+            elif (str(equips[i][j*2].get()) == 'Effect'):
+                calc[6] += int(str(equips[i][j*2+1].get()[:-1]))
+            else:
+                calc[7] += int(str(equips[i][j*2+1].get()[:-1]))
+
+    #add set effect + add artifact stat
+    calc[0][1] += int(str(atk_E.get()))
+    calc[2][1] += int(str(hp_E.get()))
+    sets = list()
+    sets.append(str(set1.get()))
+    sets.append(str(set2.get()))
+    sets.append(str(set3.get()))
+    for i in sets:
+        if (i == 'Attack'):
+            calc[0][0] += 35
+        elif (i == 'Health'):
+            calc[2][0] += 15
+        elif (i == 'Defense'):
+            calc[1][0] += 15
+        elif (i == 'Speed'):
+            calc[3][0] += 25
+        elif (i == 'Critical'):
+            calc[4] += 12
+        elif (i == 'Hit Rate'):
+            calc[6] += 20
+        elif (i == 'Destruction'):
+            calc[5] += 40
+        elif (i == 'Resist'):
+            calc[7] += 20
+        elif (i == 'Unity'):
+            calc[8] += 4
     
-    #Stat setup
-##    for i in range(0,9):
-##        stats[i]['text'] = str(calc[i][0]*calc[i][1] + calc[i][2])
+    #Stat setup + printout
+    stats[0]['text'] = str(int(int(hero.attack) * (1.0 + calc[0][0]/100) + calc[0][1]))
+    stats[1]['text'] = str(int(int(hero.defense) * (1.0 + calc[1][0]/100) + calc[1][1]))
+    stats[2]['text'] = str(int(int(hero.health) * (1.0 + calc[2][0]/100) + calc[2][1]))
+    stats[3]['text'] = str(int(int(hero.speed) * (1.0 + calc[3][0]/100) + calc[3][1]))
+    stats[4]['text'] = str(float(float(hero.critC) + calc[4])) + '%'
+    stats[5]['text'] = str(float(float(hero.critD) + calc[5])) + '%' 
+    stats[6]['text'] = str(float(float(hero.effect) + calc[6])) + '%'
+    stats[7]['text'] = str(float(float(hero.resist) + calc[7])) + '%'
+    stats[8]['text'] = str(float(float(hero.dual) + calc[8])) + '%'
+    
 
 #This function checks what stat is there
 ##def check(array,data):
@@ -391,7 +467,7 @@ charaName.set("Yuna")
 charaName.pack(side=TOP, fill=X)
 charaName['menu'].config(font=("Arial", 20), bg="#000000", fg="#AAAAAA")
 #Image
-photo= PhotoImage(file="./Images/Yuna2.png")
+photo= PhotoImage(file="./Images/Yuna.png")
 charaImage = Label(charaArea, image=photo, bg='black', fg='black')
 charaImage.pack()
 
